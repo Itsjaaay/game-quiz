@@ -1,13 +1,28 @@
-// src/api.js
-import axios from 'axios';
+const request = require('request');
 
-const API_URL = 'https://the-trivia-api.com/v2/questions';
+export const fetchQuestions = (category) => {
+  const apiKey = '7b9e4990f3mshadeff47f0a99ad0p188b5ajsn09e11d40cf07'; 
+  const apiUrl = `https://api.api-ninjas.com/v1/trivia?category=${category}`;
 
-export const fetchQuestions = async () => {
-  try {
-    const response = await axios.get(API_URL);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  return new Promise((resolve, reject) => {
+    request.get({
+      url: apiUrl,
+      headers: {
+        'X-Api-Key': apiKey
+      }
+    }, (error, response, body) => {
+      if (error) {
+        reject(error);
+      } else if (response.statusCode !== 200) {
+        reject(new Error(`Error: ${response.statusCode} - ${body.toString('utf8')}`));
+      } else {
+        try {
+          const data = JSON.parse(body);
+          resolve(data);
+        } catch (parseError) {
+          reject(parseError);
+        }
+      }
+    });
+  });
 };
