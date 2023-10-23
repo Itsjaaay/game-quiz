@@ -1,0 +1,114 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+  }
+  
+  .app {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+  }
+  
+  .quiz-game {
+    margin-bottom: 20px;
+  }
+  
+  .quiz-game h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #007bff;
+  }
+  
+  .quiz-game h3 {
+    font-size: 20px;
+    margin: 20px 0;
+    color: #333;
+  }
+  
+  .quiz-game button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .quiz-game button:hover {
+    background-color: #0056b3;
+  }
+  
+  .leaderboard {
+    padding: 20px;
+    background-color: #007bff;
+    border-radius: 10px;
+    color: white;
+  }
+  
+  .leaderboard h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .leaderboard ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .leaderboard li {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  /* Styles for the question container */
+  .question-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  /* Styles for the question text */
+  .question-container h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  /* Styles for the answer options */
+  .answer-options button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  /* Hover effect for answer options */
+  .answer-options button:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 768px) {
+    .app {
+      margin: 10px;
+    }
+  }
+  

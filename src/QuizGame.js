@@ -11,6 +11,7 @@ const QuizGame = () => {
   const [timer, setTimer] = useState(10);
   const [userName, setUserName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("history"); // Default category
+  const [answer, setAnswer] = useState("");
 
   const handleNameChange = (e) => {
     setUserName(e.target.value);
@@ -27,9 +28,11 @@ const QuizGame = () => {
       setGameOver(false);
       try {
         const data = await fetchQuestions(selectedCategory);
-        if (data && data.questions && data.questions.length > 0) {
-          setQuestions(data.questions);
+        if (data) {
+          console.log(data);
+          setQuestions(data[0].question);
           setCurrentQuestionIndex(0);
+          setAnswer(data[0].answer);
           resetTimer();
         } else {
           console.error("Invalid or empty questions array:", data);
@@ -96,21 +99,21 @@ const QuizGame = () => {
     <div className="quiz-game">
       {!gameStarted ? (
         <div className="user-input">
-        <label>
-          Enter your name:
-          <input type="text" value={userName} onChange={handleNameChange} />
-        </label>
-        <label>
-          Select category:
-          <select value={selectedCategory} onChange={handleCategoryChange}>
-            <option value="history">History</option>
-            <option value="geography">Geography</option>
-            <option value="science">Science</option>
-            <option value="food_and_drink">Food and Drink</option>
-          </select>
-        </label>
-        <button onClick={startGame}>Start Game</button>
-      </div>      
+          <label>
+            Enter your name:
+            <input type="text" value={userName} onChange={handleNameChange} />
+          </label>
+          <label>
+            Select category:
+            <select value={selectedCategory} onChange={handleCategoryChange}>
+              <option value="history">History</option>
+              <option value="geography">Geography</option>
+              <option value="science">Science</option>
+              <option value="food_and_drink">Food and Drink</option>
+            </select>
+          </label>
+          <button onClick={startGame}>Start Game</button>
+        </div>
       ) : (
         <div className="active-game">
           <h2>Welcome, {userName}!</h2>
@@ -118,17 +121,22 @@ const QuizGame = () => {
           <div className="countdown-timer">Time left: {timer}s</div>
           {questions.length > 0 && currentQuestionIndex < questions.length && (
             <div className="question-container">
-              <h3>{questions[currentQuestionIndex].question}</h3>
-              <div className="answer-options">
-                {questions[currentQuestionIndex].answers.map((answer, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleAnswerClick(answer.correct)}
-                  >
-                    {answer.text}
-                  </button>
-                ))}
-              </div>
+              <h3>{questions}</h3>
+              <div className="answer-options">{}</div>
+              <input></input>
+              <button
+                onClick={() => {
+                  if (
+                    document.getElementsByTagName("input")[0].value == answer
+                  ) {
+                    console.log("Correct");
+                  } else {
+                    console.log(`Wrong the correct answer is ${answer}`);
+                  }
+                }}
+              >
+                Answer
+              </button>
             </div>
           )}
         </div>
@@ -136,12 +144,23 @@ const QuizGame = () => {
       {gameOver && (
         <div className="game-over">
           <h2>Game Over!</h2>
-          <p>{userName}, your final score is: {score}</p>
+          <p>
+            {userName}, your final score is: {score}
+          </p>
           <button onClick={playAgain}>Play Again</button>
         </div>
       )}
     </div>
   );
 };
-
+// questions[currentQuestionIndex].answers.map(
+//   (answer, index) => (
+//     <button
+//       key={index}
+//       onClick={() => handleAnswerClick(answer.correct)}
+//     >
+//       {answer.text}
+//     </button>
+//   )
+// )
 export default QuizGame;
