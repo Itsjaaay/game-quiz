@@ -1,98 +1,66 @@
-/* src/index.css */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
-  background-color: #f0f0f0;
+  background-color: #2c3e50; /* Dark background color */
+  color: #ecf0f1; /* Light text color */
 }
 
-.app {
-  background-color: white;
+.quiz-game {
+  margin-bottom: 20px;
+  background-color: #34495e; /* Darker panel background color */
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
   text-align: center;
   max-width: 600px;
   width: 100%;
 }
 
-.quiz-game {
+.user-input {
   margin-bottom: 20px;
 }
 
-.quiz-game h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #007bff;
-}
-
-.quiz-game h3 {
-  font-size: 20px;
-  margin: 20px 0;
-  color: #333;
-}
-
-.quiz-game button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  padding: 10px 20px;
-  margin: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.quiz-game button:hover {
-  background-color: #0056b3;
-}
-
-.leaderboard {
-  padding: 20px;
-  background-color: #007bff;
-  border-radius: 10px;
-  color: white;
-}
-
-.leaderboard h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.leaderboard ul {
-  list-style: none;
-  padding: 0;
-}
-
-.leaderboard li {
+.user-input label {
   font-size: 18px;
-  margin-bottom: 10px;
+  margin-right: 10px;
+  color: #ecf0f1; /* Light text color */
 }
 
-/* Styles for the question container */
+.user-input input {
+  font-size: 16px;
+  padding: 8px;
+  border: 1px solid #bdc3c7; /* Light border color */
+  background-color: #ecf0f1; /* Light background color */
+  color: #2c3e50; /* Dark text color */
+}
+
+.active-game h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #3498db; /* Highlight color */
+}
+
 .question-container {
-  background-color: #f9f9f9;
+  background-color: #ecf0f1; /* Lighter panel background color */
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
   margin-bottom: 20px;
 }
 
-/* Styles for the question text */
 .question-container h3 {
   font-size: 22px;
   margin-bottom: 15px;
-  color: #333;
+  color: #2c3e50; /* Dark text color */
 }
 
-/* Styles for the answer options */
 .answer-options button {
-  background-color: #007bff;
-  color: white;
+  background-color: #3498db; /* Button background color */
+  color: #ecf0f1; /* Light text color */
   border: none;
   border-radius: 5px;
   font-size: 16px;
@@ -102,13 +70,55 @@ body {
   transition: background-color 0.3s;
 }
 
-/* Hover effect for answer options */
 .answer-options button:hover {
-  background-color: #0056b3;
+  background-color: #2980b9; /* Darker button background color on hover */
 }
 
-@media (max-width: 768px) {
-  .app {
-    margin: 10px;
-  }
+.leaderboard table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.leaderboard th, .leaderboard td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #bdc3c7; /* Light border color */
+}
+
+.leaderboard th {
+  background-color: #3498db; /* Header background color */
+  color: #ecf0f1; /* Light text color */
+}
+
+.hovered-player-info {
+  background-color: #ecf0f1; /* Lighter background color */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+  color: #2c3e50; /* Dark text color */
+}
+
+.game-over {
+  margin-top: 20px;
+}
+
+.game-over h2 {
+  color: #e74c3c; /* Game over message color */
+}
+
+.game-over button {
+  background-color: #27ae60; /* Success button background color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.game-over button:hover {
+  background-color: #218c4b; /* Darker success button background color on hover */
 }

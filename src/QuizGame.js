@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchQuestions } from "./api.js";
 import "./styles.css"; // Import the CSS file
 
@@ -8,92 +8,73 @@ const QuizGame = () => {
   const [score, setScore] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [timer, setTimer] = useState(10);
   const [userName, setUserName] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("history"); // Default category
   const [answer, setAnswer] = useState("");
+  const [leaderboard, setLeaderboard] = useState([]);
 
-  const handleNameChange = (e) => {
-    setUserName(e.target.value);
+  useEffect(() => {
+    // Load leaderboard data from local storage on component mount
+    const storedLeaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+    setLeaderboard(storedLeaderboard);
+  }, []);
+
+  const updateLeaderboard = () => {
+    const newEntry = { name: userName, score };
+    const updatedLeaderboard = [...leaderboard, newEntry].sort((a, b) => b.score - a.score);
+    setLeaderboard(updatedLeaderboard);
+    localStorage.setItem("leaderboard", JSON.stringify(updatedLeaderboard));
   };
 
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
+  const fetchNewQuestion = async () => {
+    const nextQuestionIndex = currentQuestionIndex + 1;
+    if (nextQuestionIndex < questions.length) {
+      setCurrentQuestionIndex(nextQuestionIndex);
+      setAnswer(questions[nextQuestionIndex].answer);
+    } else {
+      // End of questions, end the game
+      setGameOver(true);
+    }
+  };
+
+  const handleAnswerSubmit = (userAnswer) => {
+    if (userAnswer.toLowerCase() === answer.toLowerCase()) {
+      // Correct answer logic - add points
+      setScore(score + 100);
+      // Fetch the next question
+      fetchNewQuestion();
+    } else {
+      // Incorrect answer logic - deduct points
+      setScore(Math.max(0, score - 50)); // Deduct 50 points for incorrect answers
+      // End the game if the answer is wrong
+      setGameOver(true);
+    }
   };
 
   const startGame = async () => {
-    if (selectedCategory && userName) {
-      setScore(0);
-      setGameStarted(true);
-      setGameOver(false);
-      try {
-        const data = await fetchQuestions(selectedCategory);
-        if (data) {
-          console.log(data);
-          setQuestions(data[0].question);
-          setCurrentQuestionIndex(0);
-          setAnswer(data[0].answer);
-          resetTimer();
-        } else {
-          console.error("Invalid or empty questions array:", data);
-          setGameOver(true);
-        }
-      } catch (error) {
-        console.error("Error fetching questions:", error);
-        setGameOver(true);
-      }
-    } else {
-      alert("Please enter your name and select a category.");
-    }
-  };
-
-  const handleAnswerClick = useCallback(
-    (isCorrect) => {
-      if (isCorrect) {
-        setScore(score + 100);
-      }
-
-      const nextQuestionIndex = currentQuestionIndex + 1;
-
-      if (nextQuestionIndex < questions.length) {
-        setCurrentQuestionIndex(nextQuestionIndex);
-        resetTimer();
-      } else {
-        setGameOver(true);
-      }
-    },
-    [score, currentQuestionIndex, questions.length]
-  );
-
-  const resetTimer = () => {
-    setTimer(10);
-  };
-
-  const playAgain = () => {
-    setGameStarted(false);
+    setScore(0);
+    setGameStarted(true);
     setGameOver(false);
-    setCurrentQuestionIndex(0);
-    setUserName("");
-    setSelectedCategory("history"); // Reset category to default
+    try {
+      const data = await fetchQuestions("geography"); // Set category to geography
+      if (data && data.length > 0) {
+        setQuestions(data);
+        setCurrentQuestionIndex(0);
+        setAnswer(data[0].answer);
+      } else {
+        console.error("Invalid or empty questions array:", data);
+        setGameOver(true);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      setGameOver(true);
+    }
   };
 
-  useEffect(() => {
-    let countdown;
-    if (gameStarted && !gameOver) {
-      countdown = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-    }
-
-    if (timer === 0) {
-      clearInterval(countdown);
-      handleAnswerClick(false); // User ran out of time, move to the next question
-    }
-
-    return () => {
-      clearInterval(countdown);
-    };
-  }, [timer, gameStarted, gameOver, handleAnswerClick]);
+  const handleDeleteEntry = (index) => {
+    const updatedLeaderboard = leaderboard.filter((_, i) => i !== index);
+    setLeaderboard(updatedLeaderboard);
+    localStorage.setItem("leaderboard", JSON.stringify(updatedLeaderboard));
+  };
 
   return (
     <div className="quiz-game">
@@ -101,16 +82,7 @@ const QuizGame = () => {
         <div className="user-input">
           <label>
             Enter your name:
-            <input type="text" value={userName} onChange={handleNameChange} />
-          </label>
-          <label>
-            Select category:
-            <select value={selectedCategory} onChange={handleCategoryChange}>
-              <option value="history">History</option>
-              <option value="geography">Geography</option>
-              <option value="science">Science</option>
-              <option value="food_and_drink">Food and Drink</option>
-            </select>
+            <input type="text" value={userName} onChange={(e) => setUserName(e.target.value)} />
           </label>
           <button onClick={startGame}>Start Game</button>
         </div>
@@ -118,49 +90,67 @@ const QuizGame = () => {
         <div className="active-game">
           <h2>Welcome, {userName}!</h2>
           <p>Score: {score}</p>
-          <div className="countdown-timer">Time left: {timer}s</div>
           {questions.length > 0 && currentQuestionIndex < questions.length && (
             <div className="question-container">
-              <h3>{questions}</h3>
-              <div className="answer-options">{}</div>
-              <input></input>
-              <button
-                onClick={() => {
-                  if (
-                    document.getElementsByTagName("input")[0].value == answer
-                  ) {
-                    console.log("Correct");
-                  } else {
-                    console.log(`Wrong the correct answer is ${answer}`);
-                  }
-                }}
-              >
-                Answer
+              <h3>{questions[currentQuestionIndex].question}</h3>
+              <input type="text" placeholder="Your answer..." />
+              <button onClick={() => handleAnswerSubmit(document.getElementsByTagName("input")[0].value)}>
+                Submit Answer
               </button>
             </div>
           )}
         </div>
       )}
+
+      {/* Leaderboard */}
+      <div className="leaderboard">
+        <h2>Leaderboard</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Player</th>
+              <th>Score</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leaderboard.map((entry, index) => (
+              <tr key={index} className="leaderboard-entry">
+                <td>{index + 1}</td>
+                <td>{entry.name}</td>
+                <td>{entry.score}</td>
+                <td>
+                  <button onClick={() => handleDeleteEntry(index)}>X</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Game Over */}
       {gameOver && (
         <div className="game-over">
           <h2>Game Over!</h2>
           <p>
             {userName}, your final score is: {score}
           </p>
-          <button onClick={playAgain}>Play Again</button>
+          <button
+            onClick={() => {
+              updateLeaderboard();
+              setGameStarted(false);
+              setGameOver(false);
+              setCurrentQuestionIndex(0);
+              setUserName("");
+            }}
+          >
+            Play Again
+          </button>
         </div>
       )}
     </div>
   );
 };
-// questions[currentQuestionIndex].answers.map(
-//   (answer, index) => (
-//     <button
-//       key={index}
-//       onClick={() => handleAnswerClick(answer.correct)}
-//     >
-//       {answer.text}
-//     </button>
-//   )
-// )
+
 export default QuizGame;
